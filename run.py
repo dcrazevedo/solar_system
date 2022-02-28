@@ -1,11 +1,10 @@
-from turtle import distance
 import pygame
 import math
 
 
 pygame.init()
 
-WIDTH, HEIGH = 700, 700
+WIDTH, HEIGH = 900, 700
 
 WIN = pygame.display.set_mode((WIDTH, HEIGH))
 pygame.display.set_caption('Satelite race')
@@ -22,7 +21,7 @@ class Planet:
 
     ASTRONOMICAL_UNIT = 149.6e6 * 1000
     GRAVITATIONAL_UNIT = 6.67428e-11
-    SCALE = 150 / ASTRONOMICAL_UNIT # 1 ASTRONOMICAL_UNIT = 100 pixels
+    SCALE = 200 / ASTRONOMICAL_UNIT # 1 ASTRONOMICAL_UNIT = 100 pixels
     TIMESTEP = 3600 * 24 # 1 DAY IN SECONDS
 
     def __init__(self, x, y, radius, color, mass):
@@ -47,16 +46,18 @@ class Planet:
         if len(self.orbit) > 2:
             updated_points = []
             for point in self.orbit:
-                x, y = point
-                x = x * self.SCALE + WIDTH/2
-                y = y * self.SCALE + HEIGH/2
-                updated_points.append((x, y))
+                point_x, point_y = point
+                point_x = point_x * self.SCALE + WIDTH/2
+                point_y = point_y * self.SCALE + HEIGH/2
+                updated_points.append((point_x, point_y))
 
             pygame.draw.lines(win, self.color, False, updated_points, 2)
-        pygame.draw.circle(win, self.color, (x, y), self.radius)
+        
+        pygame.draw.circle(win, self.color, (int(x), int(y)), self.radius, 0)
+
         if not self.is_sun:
             distance_text = FONT.render(f'{round(self.distance_to_sun/1000, 1)}km', 1, WHITE)
-            win.blit(distance_text, (x - distance_text.get_width()/2, y - distance_text.get_height()/2))
+            win.blit(distance_text, (x - distance_text.get_width()/2, y + self.radius))
 
     def attraction(self, other):
         other_x, other_y = other.x, other.y
